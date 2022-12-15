@@ -34,7 +34,11 @@ python3 zyft_backend.py
 
 Tests
 -----
-* TODO
+make test
+
+alternatively
+
+pytest
 
 Assumptions
 -----------
