@@ -3,11 +3,12 @@ import os
 import uuid
 
 
-class DataTransformer:
+class DataSetCreation:
     def __init__(self, path):
         self.path = path
         self.uids = []
         self.upcs = {}
+        self.res = []
 
     def get_upcs(self):
         with open(self.path, "r") as f:
@@ -22,7 +23,6 @@ class DataTransformer:
                 self.upcs[upc].append(row)
 
     def get_res(self):
-        res = []
         for upc, rows in self.upcs.items():
             for i, row in enumerate(rows):
                 for k, v in list(row.items()):
@@ -33,36 +33,58 @@ class DataTransformer:
                         continue
                     row[f"{k}_{i+1}"] = v
                     del row[k]
-        for upc, rows in self.upcs.items():
+                row["counter"] = i + 1
             self.upcs[upc] = {k: v for row in rows for k, v in row.items()}
             self.upcs[upc] = {k: self.upcs[upc][k] for k in sorted(self.upcs[upc])}
             if upc in self.uids:
                 self.upcs[upc]["upc"] = "null"
-        res = list(self.upcs.values())
-        return res
+        self.res = list(self.upcs.values())
 
     def check_dir(self, path):
         path = os.path.dirname(path)
         if not os.path.exists(path):
             os.makedirs(path)
 
-    def write_csv(self, path, res):
+    def write_csv(self, path):
         headers = set()
-        for row in res:
+        for row in self.res:
             headers.update(row.keys())
         headers = sorted(headers)
         self.check_dir(path)
         with open(path, "w") as f:
             writer = csv.DictWriter(f, fieldnames=headers)
             writer.writeheader()
-            writer.writerows(res)
+            writer.writerows(self.res)
+
+    def count_diff_titles(self, dic):
+        count = 0
+        for row in dic:
+            title_keys = [k for k in row.keys() if "title" in k]
+            if len(title_keys) != len(set([row[k] for k in title_keys])):
+                continue
+            else:
+                count += 1
+        return count
 
     def transform(self):
         self.get_upcs()
-        res = self.get_res()
-        self.write_csv("zyft_backend/tmp/transformed.csv", res)
+        self.get_res()
+        res_gt_1 = [row for row in self.res if row["counter"] > 1]
+        res_gt_1_len = len(res_gt_1)
+        print(
+            f"How many products have at least one match in this dataset? {res_gt_1_len}"
+        )
+        res_lte_1 = [row for row in self.res if row["counter"] <= 1]
+        res_lte_1_len = len(res_lte_1)
+        print(f"How many products have no matches? {res_lte_1_len}")
+        print(
+            f"how many total matches in this dataset have titles that are different? {self.count_diff_titles(res_gt_1)}"
+        )
+        self.write_csv(
+            self.path.replace("data", "tmp").replace(".csv", "_transformed.csv")
+        )
 
 
 if __name__ == "__main__":
-    dt = DataTransformer("zyft_backend/data/data_analysis_test_data (2).csv")
-    dt.transform()
+    dsc = DataSetCreation("zyft_backend/data/data_analysis_test_data (2).csv")
+    dsc.transform()

@@ -10,7 +10,7 @@ class ZyftBackend:
         self.path = path
         self.model_tupple = model_tupple
         self.html_to_xpath = html_to_xpath.HtmlToXpath(self.html)
-        self.data_set_creation = data_set_creation.DataTransformer(self.path)
+        self.data_set_creation = data_set_creation.DataSetCreation(self.path)
         self.tag_model_number = tag_model_number.Feature(self.model_tupple)
 
     def generate_xpath_query(self, zyft_node_id):
@@ -46,6 +46,15 @@ if __name__ == "__main__":
     )
     html_to_tag = "<html> <body> ABC HU6630B XYZ HU6630B </body><html>"
     zyft_backend = ZyftBackend(html, path, model_tupple)
+    print("*" * 80)
+    print("HTML to XPATH")
+    print("*" * 80)
     print(zyft_backend.generate_xpath_query("123456"))
+    print("*" * 80)
+    print("Data Set Creation")
+    print("*" * 80)
     print(zyft_backend.get_data_set())
+    print("*" * 80)
+    print("Tag Model Number")
+    print("*" * 80)
     print(zyft_backend.tag_html(html_to_tag))
