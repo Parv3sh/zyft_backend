@@ -1,26 +1,3 @@
-# You are given a list of model numbers such as:
-# PB62WH CA416 HU6630B MDC9082-1 CA960 ACL104RA2-10 DBA2182S. 278062 ACL104RA2-3 IEBC001 IEBC001
-# Consider you have a list of such model numbers. The number of such model numbers could be 1 Million.
-# You are given an HTML, you want to locate if any of these 1 Million Model numbers appear in the product data/text inside Html.
-# class Feature:
-# def __init__(self, list_models: List):
-# pass
-# def tag_html(HTML):
-# pass
-# You need to write a class that can be initialised with list of model numbers (approximately 1 million).
-# Write an efficient function that can tag HTML really quickly.
-# It’s okay to take longer while preprocessing in __init__ , but tag_html functions need to be really efficient.
-# Guidelines:
-# 1. __init__ can take a long time even hours
-# 2. tag_html should finish tagging a HTML in less than a second.
-
-# Output of the function should be start and end indexes of the model number in html and
-# # Outut and sample execution
-# > feature_tagging = Feature(["HUB6630B", .......1million model numbers])
-# > feature_tagging.tag_html("<html> <body> ABC HU6630B XYZ </body><html>")
-# > ["HU6630", {"start_index":18, "end_index": 24}] # Output gives model number, and start, and end index of the model number in html. H in HU6630 appears at 18 index in html and end of model number B appears at index 24.
-
-
 class TrieNode:
     def __init__(self):
         self.children = {}

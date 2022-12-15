@@ -43,7 +43,6 @@ class DataTransformer:
 
     def check_dir(self, path):
         path = os.path.dirname(path)
-        print(path)
         if not os.path.exists(path):
             os.makedirs(path)
 
